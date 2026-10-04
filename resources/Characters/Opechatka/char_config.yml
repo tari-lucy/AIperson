@@ -1,0 +1,12 @@
+Names:
+  Default: Opechatka
+  Minecraft: Opechatka
+  Aliases:
+    - Opechatka
+    - Опечатка
+    - опечатка
+
+Socials:
+  TwitchChannelName: opechatka  # заглушка, поменять на свой канал
+
+GodUsers: []
