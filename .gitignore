@@ -220,3 +220,6 @@ docker/stt/wlk-src/
 
 # локальные переменные окружения БД (шаблон — .env.postgres.example)
 .env.postgres
+
+# отчёты тестов персонажей
+characters_dev/**/results/

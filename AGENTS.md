@@ -1,71 +1,46 @@
-# NetTyan — Project Context
+# AIperson: контекст проекта
 
-RE-READ THIS FULLY IF THE CONVERSATION WAS SUMMARIZED! Always read this file at the start of every conversation before doing anything else.
+Для ИИ-ассистентов и людей, которые заходят в репозиторий впервые. Перечитывайте файл целиком после суммаризации диалога.
 
-> При первом прочтении или после суммаризации диалога — скажи кратко (5-10 слов) выжимку правил. Не повторяй каждый раз.
+## Что это
+Форк [NetTyan](https://github.com/3ndetz/NetTyan) (3ndetz, MIT) для создания ИИ-персонажей: агент поверх языковой модели, чат, голос, Minecraft.
+Движок чужой, персонажи наши. Владелица форка: tari-lucy. Первый персонаж: **Opechatka**, корреспондентка, которая очнулась в мире из квадратов.
 
-## Project structure
-
+## Структура
 | Путь | Что там |
 |---|---|
-| `src/agent/` | логика поведения поверх языковой модели, инструменты, промпты |
-| `src/character/` | персонаж: конфиг, имена, эмоции, голосовые референсы |
-| `src/tts/`, `src/data_collectors/stt/` | синтез и распознавание речи |
-| `src/data_collectors/` | входящие события: площадки трансляций, игра, донаты |
-| `src/data_flow/` | база, модели, слой доступа к данным |
-| `src/live2d/`, `src/front/` | аватар и вывод на трансляцию |
-| `docker/` | контейнеры: фильтрация, TTS, STT |
-| `resources/` | персонажи, промпты, звуки |
-| `docs/help/` | пользовательская документация (публикуется на github.io) |
+| `resources/Characters/<Имя>/` | персонаж: `char_config.yml`, `personalities.yml` (СОБИРАЕТСЯ скриптом), `ideas.yml`, `user_status_tags.yml`, `Voice/` |
+| `characters_dev/<имя>/` | рабочие материалы персонажа: `parts/` (исходники промпта), `build_prompts.py`, `scenarios.json`, `test_scenarios.py`, `engine_rules.py`, `README.md` |
+| `src/` | движок NetTyan (агент, инструменты, мост к Minecraft). Чужой код, правим аккуратно |
+| `docs/` | документация шаблона |
+| `.env` | настройки и ключ. В `.gitignore`. Шаблон: `.env.example` |
 
-## STRICT Rules
+## Правила работы
+- **Язык.** Общение и документация по-русски. Промпты персонажа по-английски, речь персонажа по-русски.
+- **Промпт не правим руками.** Источник: `characters_dev/<имя>/parts/*.txt`. После правок: `python3 characters_dev/<имя>/build_prompts.py`.
+- **После правки промпта прогоняем сценарии:** `python3 characters_dev/<имя>/test_scenarios.py`. Автопроверки мягкие, отчёт из `results/` читаем глазами.
+  Лимиты бесплатного API ограничены (20 запросов в минуту, 400 за 3 часа), скрипт сам ждёт при 429.
+- **Секреты.** Ключи только в `.env`. Не печатать, не коммитить, не вставлять в чат и отчёты. Перед публикацией искать ключи по истории (`git log -p | grep`).
+- **Содержание персонажей.** Без наркотиков, сексуальных тем, мата и ненависти. Шутим над миром, институциями и собой, не над живым человеком перед нами.
+  Стиль любимых авторов брать можно, имена, цитаты и чужие тексты нет. Голос реального человека без его согласия не клонировать.
+- **Данные людей.** Чаты зрителей, ники, почты в репозиторий не кладём. Тестовые сценарии только выдуманные.
+- **Движок.** Внутренние имена (пакет `nettyan`, команда `nettyan`, модули в `src/`) не переименовываем: иначе обновления из оригинала превращаются в мучение.
+  Правки в `src/` небольшие и отдельными коммитами (префикс модуля), чтобы проще разрешать конфликты.
+- **Оригинал.** Ремоут `upstream` указывает на 3ndetz/NetTyan. Обновления: `git fetch upstream`, затем слияние. В `upstream` не пушим. `LICENSE` и `AUTHORS` сохраняем, в README есть ссылка на происхождение.
+- **Ресурсы.** Звуки в `resources/` не покрыты лицензией проекта (см. README шаблона). До публичного использования заменить своими.
+- **Git.** Автор коммитов: владелица репозитория. В сообщении префикс модуля (`characters:`, `engine:`, `docs:`). Не пушить, не открывать PR и не делать `--force` без прямой просьбы.
+- **Объём работы.** Не делай лишнего: небольшие правки, проверка на тестах, честный отчёт, что проверено и что нет.
+- **Документация.** Коротко и по делу, без рекламных лозунгов.
 
-- Auto-commit and push your changes (if not explained otherwise).
-- - Auto-commit and PUSH!! your changes (if not explained otherwise).
-  - **Do NOT add `Co-Authored-By` lines to commit messages.** Ever.
-  - **All commits MUST use author name and email, not ai's.** Never use Anthropic/Claude credentials. Use owner's creds if git config differs.
-  - Do not forget periodically do pulls to keep up with parallel workers.
-  - Add upperleveled module name to commit message if relevant (e.g. "main: implement ...").
-- **Автономность:** не делай лишнего, не строй велосипеды, переиспользуй пайплайн-простые методы, избегай дублирования кода.
-
-## Tone & style
-
-No pompous slogans, no self-praise, no "elite" or "advanced" anything. Short, dry, casual — like baritone's "Google Maps for Blockgame" or "plays block game". If it sounds like a marketing pitch, rewrite it. Think understated British humour, not a startup landing page.
-
-## Code run commands
-
-Activate our UV virtual environment:
-
-If you are on windows
-
+## Команды
 ```bash
-.venv\Scripts\activate.bat
+source .venv/bin/activate                      # Linux/macOS; на Windows: .venv\Scripts\activate.bat
+python3 characters_dev/opechatka/build_prompts.py
+python3 characters_dev/opechatka/test_scenarios.py --dry-run     # показать промпт без запросов
+python3 characters_dev/opechatka/test_scenarios.py --only 03 05   # выбранные сценарии
+nettyan -rof                                   # запуск движка (нужны ffmpeg, Docker для голоса и т.д., см. docs/help)
 ```
 
-If on macOS or Linux
-
-```bash
-source .venv/bin/activate
-```
-
-## Введение в проект (план для AI)
-
-1. Прочитать `AGENTS.md` (этот файл)
-2. Прочитать `docs/ai/progress.md` — **обязательно**
-3. Если нужен контекст — изучить код по задаче
-
-## Документация сессий
-
-- `docs/ai/progress.md` — детальный прогресс по структуре **IPI** (Investigate → Plan → Implement)
-- `docs/ai/archive/` — архив прогресса (при >500 строк или завершении крупного блока)
-- `docs/ai/readme.md` — формат и правила ведения progress-файлов
-
-Формат архивов: `DD-MM-YYYY-task-name.md`
-
-## Important files
-
-- `README.md` — project overview, fork history, credits
-- `docs/help/0_INSTALLATION.md` — how to build and run from scratch
-- `docs/help/DEVELOP.md` — notes for project developers
-- `AGENTS.md` — this file (AI assistant rules)
-- `docs/ai/progress.md` — прогресс AI по задачам
+## Где что дальше
+Список незаконченного для Opechatka: `characters_dev/opechatka/README.md`, раздел «Что осталось».
+Старые заметки автора шаблона про работу ИИ лежат в `docs/ai/` и к нашим задачам не привязаны.
