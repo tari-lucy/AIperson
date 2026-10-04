@@ -223,3 +223,8 @@ docker/stt/wlk-src/
 
 # отчёты тестов персонажей
 characters_dev/**/results/
+
+# исходники персонажей: общие маски выше (parts/, *.json) их прячут, возвращаем
+!characters_dev/**/parts/
+!characters_dev/**/parts/**
+!characters_dev/**/*.json
